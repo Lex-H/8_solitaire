@@ -42,6 +42,10 @@
             position: absolute;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            top: 10px;
+            /* 初始位置 */
+            left: 10px;
+            /* 初始位置 */
         }
 
         .card.front {
@@ -153,7 +157,11 @@
         function shuffleDeck() {
             const deck = document.getElementById('deck');
             for (let i = deck.children.length; i >= 0; i--) {
-                deck.appendChild(deck.children[Math.random() * i | 0]);
+                let card = deck.children[Math.random() * i | 0];
+                card.style.left = '10px';
+                card.style.top = '10px';
+                card.classList.remove('front');
+                deck.appendChild(card);
             }
         }
 
