@@ -72,6 +72,8 @@
     <script>
         const suits = ['♥', '♦', '♣', '♠']; /* 定義花色 */
         const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']; /* 定義牌值 */
+        let initialX, initialY;
+        let isDragging = false;
 
         /* 創建撲克牌組 */
         function createDeck() {
@@ -83,19 +85,27 @@
                     card.innerHTML = `
                         <div class="face back"></div>
                         <div class="face front">${value}${suit}</div>
-                    `; /* 設置卡片的前後面 */
-                    card.addEventListener('click', function () {
-                        card.classList.toggle('front'); /* 點擊卡片翻面 */
-                    });
+                    `;
                     card.addEventListener('mousedown', startDrag); /* 添加拖拽功能 */
+                    card.addEventListener('click', flipCard);
                     deck.appendChild(card); /* 將卡片添加到容器 */
                 }
+            }
+        }
+
+        /* 點擊翻面功能 */
+        function flipCard(event) {
+            if (!isDragging) {
+                event.currentTarget.classList.toggle('front');
             }
         }
 
         /* 開始拖拽功能 */
         function startDrag(event) {
             const card = event.currentTarget; /* 獲取當前卡片 */
+            isDragging = false;
+            initialX = event.clientX;
+            initialY = event.clientY;
             let shiftX = event.clientX - card.getBoundingClientRect().left; /* 計算水平位移 */
             let shiftY = event.clientY - card.getBoundingClientRect().top; /* 計算垂直位移 */
 
@@ -108,6 +118,7 @@
             /* 註冊 mousemove 事件來移動卡片 */
             function onMouseMove(event) {
                 moveAt(event.pageX, event.pageY);
+                isDragging = true;
             }
 
             document.addEventListener('mousemove', onMouseMove); /* 當鼠標移動時觸發移動函數 */
