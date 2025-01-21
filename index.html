@@ -7,133 +7,156 @@
     <title>撲克牌翻面與拖拽</title>
     <!-- CSS 样式 -->
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        #deck {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 400px;
+            height: 500px;
+            margin-bottom: 20px;
+        }
+
         .card {
             width: 100px;
-            /* 設置卡片寬度 */
             height: 150px;
-            /* 設置卡片高度 */
-            background-color: yellow;
-            /* 設置卡片背景色為黃色 */
-            border: 1px solid black;
-            /* 設置卡片邊框 */
+            background-color: #ffeb3b;
+            border: 2px solid #000;
             display: inline-block;
-            /* 使卡片並排顯示 */
             margin: 5px;
-            /* 設置卡片之間的間距 */
             text-align: center;
-            /* 文字居中 */
             line-height: 150px;
-            /* 垂直居中 */
             font-size: 24px;
-            /* 設置字體大小 */
             cursor: pointer;
-            /* 設置鼠標懸停時的指針樣式 */
             transition: transform 0.3s;
-            /* 設置轉換效果的過渡時間 */
             transform-style: preserve-3d;
-            /* 保持 3D 效果 */
             position: absolute;
-            /* 設置絕對定位 */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .card.front {
             transform: rotateY(180deg);
-            /* 旋轉卡片 */
         }
 
         .card .face {
             position: absolute;
-            /* 設置絕對定位 */
             width: 100%;
-            /* 佔滿寬度 */
             height: 100%;
-            /* 佔滿高度 */
             backface-visibility: hidden;
-            /* 隱藏背面 */
         }
 
         .card .back {
-            background-color: yellow;
-            /* 設置背面背景色為黃色 */
+            background-color: #ffeb3b;
+            border-radius: 10px;
         }
 
         .card .front {
             transform: rotateY(180deg);
-            /* 旋轉前面 */
-            background-color: white;
-            /* 設置前面背景色為白色 */
+            background-color: #ffffff;
+            border-radius: 10px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #e91e63;
         }
     </style>
 </head>
 
 <body>
-    <div id="deck"></div> <!-- 包含撲克牌的容器 -->
+    <div id="deck"></div>
+    <button class="button" onclick="shuffleDeck()">洗牌</button>
 
     <script>
-        const suits = ['♥', '♦', '♣', '♠']; /* 定義花色 */
-        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']; /* 定義牌值 */
+        const suits = ['♥', '♦', '♣', '♠'];
+        const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         let initialX, initialY;
         let isDragging = false;
 
-        /* 創建撲克牌組 */
         function createDeck() {
-            const deck = document.getElementById('deck'); /* 獲取撲克牌容器 */
-            for (let suit of suits) { /* 遍歷每個花色 */
-                for (let value of values) { /* 遍歷每個牌值 */
-                    const card = document.createElement('div'); /* 創建一個卡片元素 */
-                    card.classList.add('card'); /* 為卡片添加 'card' 類 */
+            const deck = document.getElementById('deck');
+            deck.innerHTML = '';
+            for (let suit of suits) {
+                for (let value of values) {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
                     card.innerHTML = `
                         <div class="face back"></div>
                         <div class="face front">${value}${suit}</div>
                     `;
-                    card.addEventListener('mousedown', startDrag); /* 添加拖拽功能 */
+                    card.addEventListener('mousedown', startDrag);
                     card.addEventListener('click', flipCard);
-                    deck.appendChild(card); /* 將卡片添加到容器 */
+                    deck.appendChild(card);
                 }
             }
         }
 
-        /* 點擊翻面功能 */
         function flipCard(event) {
             if (!isDragging) {
                 event.currentTarget.classList.toggle('front');
             }
         }
 
-        /* 開始拖拽功能 */
         function startDrag(event) {
-            const card = event.currentTarget; /* 獲取當前卡片 */
+            const card = event.currentTarget;
             isDragging = false;
             initialX = event.clientX;
             initialY = event.clientY;
-            let shiftX = event.clientX - card.getBoundingClientRect().left; /* 計算水平位移 */
-            let shiftY = event.clientY - card.getBoundingClientRect().top; /* 計算垂直位移 */
+            let shiftX = event.clientX - card.getBoundingClientRect().left;
+            let shiftY = event.clientY - card.getBoundingClientRect().top;
 
-            /* 移動卡片 */
             function moveAt(pageX, pageY) {
-                card.style.left = pageX - shiftX + 'px'; /* 更新卡片的水平位置 */
-                card.style.top = pageY - shiftY + 'px'; /* 更新卡片的垂直位置 */
+                card.style.left = pageX - shiftX + 'px';
+                card.style.top = pageY - shiftY + 'px';
             }
 
-            /* 註冊 mousemove 事件來移動卡片 */
             function onMouseMove(event) {
                 moveAt(event.pageX, event.pageY);
                 isDragging = true;
             }
 
-            document.addEventListener('mousemove', onMouseMove); /* 當鼠標移動時觸發移動函數 */
+            document.addEventListener('mousemove', onMouseMove);
 
             card.onmouseup = function () {
-                document.removeEventListener('mousemove', onMouseMove); /* 當鬆開鼠標時取消移動事件 */
-                card.onmouseup = null; /* 取消 mouseup 事件 */
+                document.removeEventListener('mousemove', onMouseMove);
+                card.onmouseup = null;
             };
 
             card.ondragstart = function () {
-                return false; /* 禁止拖拽事件的默認行為 */
+                return false;
             };
         }
 
-        createDeck(); /* 創建撲克牌組 */
+        function shuffleDeck() {
+            const deck = document.getElementById('deck');
+            for (let i = deck.children.length; i >= 0; i--) {
+                deck.appendChild(deck.children[Math.random() * i | 0]);
+            }
+        }
+
+        createDeck();
     </script>
 </body>
 
