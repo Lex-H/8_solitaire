@@ -16,6 +16,8 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            /* 禁用手機版網站的下拉重新整理 */
+            overscroll-behavior-y: none;
         }
 
         #deck {
@@ -116,27 +118,11 @@
             }
         }
     </style>
-    <script>
-        function lockOrientation() {
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape')
-                    .then(function () {
-                        console.log('鎖定到橫向模式');
-                    })
-                    .catch(function (error) {
-                        console.error('鎖定失敗: ', error);
-                    });
-            } else {
-                console.error('瀏覽器不支援 screen.orientation API');
-            }
-        }
-    </script>
 </head>
 
 <body>
     <div id="deck"></div>
     <button class="button" onclick="shuffleDeck()">洗牌</button>
-    <button class="button" onclick="lockOrientation()" style="left: 10vw;">鎖定橫向模式</button>
 
     <script>
         const suits = ['♥', '♦', '♣', '♠'];
